@@ -77,6 +77,18 @@ int main(int argc, char* argv[]) {
 
 	// std::cout << "Video track created" << std::endl;
 	
+	std::vector<cricket::Device> inDevices;
+	devManager->GetAudioInputDevices(&inDevices);
+	for(auto i = inDevices.begin(); i != inDevices.end(); ++i) {
+		std::cout << "Input audio device: " << i->name << ", " << i->id << std::endl;
+	}
+
+	std::vector<cricket::Device> outDevices;
+	devManager->GetAudioOutputDevices(&outDevices);
+	for(auto i = outDevices.begin(); i != outDevices.end(); ++i) {
+		std::cout << "Output audio device: " << i->name << ", " << i->id << std::endl;
+	}
+	
 	cricket::Device audioIn;
 	if(!devManager->GetAudioInputDevice("", &audioIn)) {
 		std::cerr << "Unable to get defaule audio capture device" << std::endl;
