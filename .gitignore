@@ -20,6 +20,9 @@
 *.out
 *.app
 videocon
+<<<<<<< HEAD
 
 # Project files
 *.sublime-*
+=======
+>>>>>>> fff9b3a595b87d08837d807412ed43d81c60f2f6
