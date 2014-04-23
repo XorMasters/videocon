@@ -14,7 +14,8 @@ LIB += libaudio_conference_mixer libaudio_processing libaudioproc_debug_proto
 LIB += librtp_rtcp libwebrtc_utility libprotobuf_lite libaudio_processing_sse2
 LIB += libcommon_audio libcommon_audio_sse2 libsystem_wrappers libjingle_sound 
 LIB += libjingle libsrtp libcrssl libpthread libdl librt libnss3 libyuv 
-LIB += libjpeg_turbo libXv libX11 libXext libexpat libcasablanca libcommon_utilities
+LIB += libjpeg_turbo libgthread-2.0  libgtk-x11-2.0 libgdk-x11-2.0 libatk-1.0 libgio-2.0 libpangoft2-1.0 libpangocairo-1.0 libgdk_pixbuf-2.0 libcairo libpango-1.0 libfreetype libfontconfig libgobject-2.0 libglib-2.0 libXv libX11 libXext 
+LIB += libexpat libcasablanca libcommon_utilities
 
 DEF += POSIX HAVE_WEBRTC_VIDEO
 

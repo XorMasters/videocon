@@ -1,9 +1,13 @@
 #include <iostream>
 #include <cstdlib>
 
+//#define LINUX
+//#define HAVE_GTK
+
 #include "talk/app/webrtc/peerconnectionfactory.h"
 #include "talk/app/webrtc/videosourceinterface.h"
 #include "talk/base/ssladapter.h"
+#include "talk/media/devices/videorendererfactory.h"
 #include "talk/media/devices/devicemanager.h"
 #include "talk/media/webrtc/webrtcvideocapturer.h"
 
@@ -68,7 +72,7 @@ int main(int argc, char* argv[]) {
 	// }
 	
 	// std::cout << "Video capturer created" << std::endl;
-	
+
 	// video_source_ptr source = factory->CreateVideoSource(capturer, NULL);
 	
 	// std::cout << "Created video source" << std::endl;
@@ -77,17 +81,25 @@ int main(int argc, char* argv[]) {
 
 	// std::cout << "Video track created" << std::endl;
 	
-	std::vector<cricket::Device> inDevices;
-	devManager->GetAudioInputDevices(&inDevices);
-	for(auto i = inDevices.begin(); i != inDevices.end(); ++i) {
-		std::cout << "Input audio device: " << i->name << ", " << i->id << std::endl;
-	}
+	// webrtc::VideoRendererInterface* renderer = cricket::VideoRendererFactory::CreateGuiVideoRenderer(0, 0);
+	// if(!renderer) {
+	// 	std::cerr << "Unable to create video renderer" << std::endl;
+	// } else {
+	// 	std::cout << "Video renderer created" << std::endl;
+	// 	videoTrack->AddRenderer(renderer);
+	// }
 
-	std::vector<cricket::Device> outDevices;
-	devManager->GetAudioOutputDevices(&outDevices);
-	for(auto i = outDevices.begin(); i != outDevices.end(); ++i) {
-		std::cout << "Output audio device: " << i->name << ", " << i->id << std::endl;
-	}
+	// std::vector<cricket::Device> inDevices;
+	// devManager->GetAudioInputDevices(&inDevices);
+	// for(auto i = inDevices.begin(); i != inDevices.end(); ++i) {
+	// 	std::cout << "Input audio device: " << i->name << ", " << i->id << std::endl;
+	// }
+
+	// std::vector<cricket::Device> outDevices;
+	// devManager->GetAudioOutputDevices(&outDevices);
+	// for(auto i = outDevices.begin(); i != outDevices.end(); ++i) {
+	// 	std::cout << "Output audio device: " << i->name << ", " << i->id << std::endl;
+	// }
 	
 	cricket::Device audioIn;
 	if(!devManager->GetAudioInputDevice("", &audioIn)) {
@@ -123,7 +135,7 @@ int main(int argc, char* argv[]) {
 		return EXIT_FAILURE;
 	}
 
-	std::cout << "Audio and Video tracks added to stream" << std::endl;
+	std::cout << "Audio tracks added to stream" << std::endl;
 
 	if(!connection->AddStream(localMediaStream.get(), NULL)) {
 		std::cerr << "Unable to add stream to peer connection" << std::endl;
