@@ -1,9 +1,11 @@
 #include "talk/app/webrtc/peerconnectioninterface.h"
+#include "talk/app/webrtc/mediastreaminterface.h"
 #include "VideoconSignaling.h"
 
 class VideoconPeerConnectionObserver : public webrtc::PeerConnectionObserver {
 public:
-	VideoconPeerConnectionObserver(VideoconSignaling& s) : _signaling(s) {}
+	VideoconPeerConnectionObserver(VideoconSignaling& s, webrtc::VideoRendererInterface& r) : 
+		_signaling(s), _renderer(r) {}
 	virtual ~VideoconPeerConnectionObserver() {}
 	
 public:
@@ -17,6 +19,7 @@ public:
 
 private:
 	VideoconSignaling& _signaling;
+	webrtc::VideoRendererInterface& _renderer;
 };
 
 class VideoconSetSessionDescriptionObserver : public webrtc::SetSessionDescriptionObserver {

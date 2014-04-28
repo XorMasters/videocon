@@ -40,7 +40,8 @@ int main(int argc, char* argv[]) {
 	talk_base::InitializeSSL();
 
 	VideoconSignaling signaling("Ascii-Cam", mode);
-	VideoconPeerConnectionObserver observer(signaling);
+	AsciiVideoRenderer renderer(std::cout);
+	VideoconPeerConnectionObserver observer(signaling, renderer);
 
 	factory_ptr factory = webrtc::CreatePeerConnectionFactory();
 	local_media_stream_ptr localMediaStream = factory->CreateLocalMediaStream("test-stream");
@@ -97,9 +98,6 @@ int main(int argc, char* argv[]) {
 	video_track_ptr videoTrack = factory->CreateVideoTrack("test-video-track", source);
 
 	LOG(LS_INFO) << "Video track created";
-	
-	AsciiVideoRenderer renderer(std::cout);
-	videoTrack->AddRenderer(&renderer);
 	
 	LOG(LS_INFO) << "Video renderer created";
 

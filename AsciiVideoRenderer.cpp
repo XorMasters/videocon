@@ -22,8 +22,6 @@ void AsciiVideoRenderer::SetSize(int width, int height) {
 }
 
 void AsciiVideoRenderer::RenderFrame(const cricket::VideoFrame* frame) {
-	LOG(LS_INFO) << "Rendering frame";
-
 	size_t width  = frame->GetWidth();
 	size_t height = frame->GetHeight();
 	if( width != _width && height != _height) {
@@ -61,12 +59,13 @@ void AsciiVideoRenderer::_renderBuffer(const uint8_t* buffer, size_t width, size
 
 	std::string frameStr;
 	uint8_t maxIdx = sizeof(_characters) - 1;
-	for(size_t h = 0; h < height; ++h) {
+	for(size_t h = 0; h < 43; ++h) {
 		for(size_t w = 0; w < width; ++w) {
 			uint8_t pixel = buffer[h*width + w];
-			frameStr += _characters[maxIdx -  (uint8_t)::round(_contrast*pixel/255 * maxIdx)];
+			if( w < 132 ) frameStr += _characters[maxIdx -  (uint8_t)::round(_contrast*pixel/255 * maxIdx)];
 		}
 		frameStr += "\n";
 	}
-	_out << frameStr;
+	std::cout << frameStr;
+	std::cout << "================================================================================" << std::endl;
 }

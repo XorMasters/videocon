@@ -5,12 +5,20 @@
 
 #include "VideoconObservers.h"
 
+typedef talk_base::scoped_refptr<webrtc::VideoTrackInterface> video_track_ptr;
+
 void VideoconPeerConnectionObserver::OnStateChange(StateType state_changed) {
 	LOG(LS_INFO) << ">>> State changed to: " << state_changed;
 }
 
 void VideoconPeerConnectionObserver::OnAddStream(webrtc::MediaStreamInterface* stream) {
 	LOG(LS_INFO) << ">>> Stream added";
+
+	video_track_ptr track = stream->FindVideoTrack("test-video-track");
+	if(track.get() != NULL) {
+		LOG(LS_INFO) << "Found video track. Adding renderer";
+		track->AddRenderer(&_renderer);
+	}
 }
 
 void VideoconPeerConnectionObserver::OnRemoveStream(webrtc::MediaStreamInterface* stream) {
