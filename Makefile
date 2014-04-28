@@ -13,9 +13,9 @@ LIB += libvoice_engine libaudio_device libNetEq libmedia_file
 LIB += libaudio_conference_mixer libaudio_processing libaudioproc_debug_proto 
 LIB += librtp_rtcp libwebrtc_utility libprotobuf_lite libaudio_processing_sse2
 LIB += libcommon_audio libcommon_audio_sse2 libsystem_wrappers libjingle_sound 
-LIB += libjingle libsrtp libcrssl libpthread libdl librt libnss3 libyuv 
-LIB += libjpeg_turbo libgthread-2.0  libgtk-x11-2.0 libgdk-x11-2.0 libatk-1.0 libgio-2.0 libpangoft2-1.0 libpangocairo-1.0 libgdk_pixbuf-2.0 libcairo libpango-1.0 libfreetype libfontconfig libgobject-2.0 libglib-2.0 libXv libX11 libXext 
-LIB += libexpat libcasablanca libcommon_utilities
+LIB += libjingle libsrtp libpthread libdl librt libyuv 
+LIB += libjpeg_turbo libgthread-2.0 libcrssl libnss3 libplc4 libgtk-x11-2.0 libgdk-x11-2.0 libatk-1.0 libgio-2.0 libpangoft2-1.0 libpangocairo-1.0 libgdk_pixbuf-2.0 libcairo libpango-1.0 libfreetype libfontconfig libgobject-2.0 libglib-2.0 libXv libX11 libXext 
+LIB += libexpat libcasablanca libcommon_utilities libnssutil3 libnspr4 
 
 DEF += POSIX HAVE_WEBRTC_VIDEO
 
@@ -48,7 +48,7 @@ LIBDIR += ../trunk/out/Debug/obj/third_party/libjpeg_turbo
 
 CXXFLAGS += $(patsubst %,-I%,$(INC))
 CXXFLAGS += $(patsubst %,-D%,$(DEF))
-CXXFLAGS += -std=c++11
+CXXFLAGS += -std=c++11 -g
 
 #CXXFLAGS += -arch i386 -std=gnu++11
 #CXXFLAGS += -mmacosx-version-min=10.6 
@@ -61,7 +61,7 @@ LDFLAGS += $(patsubst lib%,-l%,$(LIB))
 #LDFLAGS += -Wl,-search_paths_first -Wl,-pie 
 #-mmacosx-version-min=10.6 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk
 
-videocon: VideoconObservers.o VideoconSignaling.o main.o
-	$(CXX) -std=c++11 -o $@ $^ $(LDFLAGS)
+videocon: VideoconObservers.o VideoconSignaling.o AsciiVideoRenderer.o main.o
+	$(CXX) -std=c++11 -g -o $@ $^ $(LDFLAGS)
 	
 		

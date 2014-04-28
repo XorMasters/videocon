@@ -1,5 +1,4 @@
 #include "talk/app/webrtc/peerconnectioninterface.h"
-
 #include "VideoconSignaling.h"
 
 class VideoconPeerConnectionObserver : public webrtc::PeerConnectionObserver {

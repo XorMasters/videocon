@@ -1,21 +1,24 @@
-#include <iostream>
+
+#define LOGGING 1
+
+#include "talk/base/logging.h"
 
 #include "VideoconObservers.h"
 
 void VideoconPeerConnectionObserver::OnStateChange(StateType state_changed) {
-	std::cout << ">>> State changed to: " << state_changed << std::endl;
+	LOG(LS_INFO) << ">>> State changed to: " << state_changed;
 }
 
 void VideoconPeerConnectionObserver::OnAddStream(webrtc::MediaStreamInterface* stream) {
-	std::cout << ">>> Stream added" << std::endl;
+	LOG(LS_INFO) << ">>> Stream added";
 }
 
 void VideoconPeerConnectionObserver::OnRemoveStream(webrtc::MediaStreamInterface* stream) {
-	std::cout << ">>> Stream removeed" << std::endl;
+	LOG(LS_INFO) << ">>> Stream removeed";
 }
 
 void VideoconPeerConnectionObserver::OnRenegotiationNeeded() {
-	std::cout << ">>> Negotiation needed" << std::endl;
+	LOG(LS_INFO) << ">>> Negotiation needed";
 }
 
 void VideoconPeerConnectionObserver::OnIceCandidate(const webrtc::IceCandidateInterface* candidate) {
@@ -24,26 +27,26 @@ void VideoconPeerConnectionObserver::OnIceCandidate(const webrtc::IceCandidateIn
 
 	_signaling.SendCandidate(candidate);
 
-	std::cout << ">>> Ice candidate received: " <<  candStr;
+	LOG(LS_INFO) << ">>> Ice candidate received: " <<  candStr;
 }
 
 void VideoconPeerConnectionObserver::OnError() {
-	std::cout << ">>> Error" << std::endl;
+	LOG(LS_INFO) << ">>> Error";
 }
 
 void VideoconSetSessionDescriptionObserver::OnSuccess() {
-	std::cout << ">>> Succusfully added session description" << std::endl;
+	LOG(LS_INFO) << ">>> Succusfully added session description";
 }
 
 void VideoconSetSessionDescriptionObserver::OnFailure(const std::string& error) {
-	std::cout << ">>> Failed to add session description" << std::endl;
+	LOG(LS_INFO) << ">>> Failed to add session description";
 }
 
 void VideoconCreateSessionDescriptionObserver::OnSuccess(webrtc::SessionDescriptionInterface* desc) {
 	std::string offer;
 	desc->ToString(&offer);
 
-	std::cout << ">>> Successfully created session description interface: " << offer << std::endl;
+	LOG(LS_INFO) << ">>> Successfully created session description interface: " << offer;
 	
 	_connection->SetLocalDescription(&_observer, desc);
 
@@ -56,23 +59,23 @@ void VideoconCreateSessionDescriptionObserver::OnSuccess(webrtc::SessionDescript
 }
 
 void VideoconCreateSessionDescriptionObserver::OnFailure(const std::string& error) {
-	std::cout << ">>> Failed to create session description interface" << std::endl;
+	LOG(LS_INFO) << ">>> Failed to create session description interface";
 }
 
 void VideoconSignalingObserver::OnReceivedOffer(webrtc::SessionDescriptionInterface* offer) {
-	std::cout << "Received an offer" << std::endl;
+	LOG(LS_INFO) << "Received an offer";
 
 	_connection->SetRemoteDescription(&_observer, offer);
 }
 
 void VideoconSignalingObserver::OnReceivedAnswer(webrtc::SessionDescriptionInterface* answer) {
-	std::cout << "Received an answer" << std::endl;
+	LOG(LS_INFO) << "Received an answer";
 
 	_connection->SetRemoteDescription(&_observer, answer);
 }
 
 void VideoconSignalingObserver::OnReceivedCandidate(webrtc::IceCandidateInterface* candidate) {
-	std::cout << "Adding ICE candidate received through signaling" << std::endl;
+	LOG(LS_INFO) << "Adding ICE candidate received through signaling";
 
 	_connection->AddIceCandidate(candidate);
 }

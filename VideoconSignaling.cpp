@@ -1,4 +1,6 @@
-#include <iostream>
+
+#define LOGGING 1
+#include "talk/base/logging.h"
 
 #include <cpprest/json.h>
 
@@ -10,28 +12,28 @@ using namespace web::http::client;
 using namespace concurrency::streams;
 
 bool VideoconSignaling::SendOffer(webrtc::SessionDescriptionInterface* offer) {
-	std::cout << "Sending offer through signaling" << std::endl;
+	LOG(LS_INFO) << "Sending offer through signaling";
 
 	_sendSessionDesc(_modeString, "offer", offer);
 	return true;
 }
 
 bool VideoconSignaling::SendAnswer(webrtc::SessionDescriptionInterface* answer) {
-	std::cout << "Sending answer through signaling" << std::endl;
+	LOG(LS_INFO) << "Sending answer through signaling";
 
 	_sendSessionDesc(_modeString, "answer", answer);
 	return true;
 }
 
 bool VideoconSignaling::SendCandidate(const webrtc::IceCandidateInterface* candidate) {
-	std::cout << "Sending candidate through signaling" << std::endl;
+	LOG(LS_INFO) << "Sending candidate through signaling";
 
 	std::string candidateStr;
 	candidate->ToString(&candidateStr);
 
-	std::cout << "sdp_mid: " << candidate->sdp_mid() << std::endl;
-	std::cout << "sdp_mline_index: " << candidate->sdp_mline_index() << std::endl;
-	std::cout << "sdp: " << candidateStr << std::endl;
+	LOG(LS_INFO) << "sdp_mid: " << candidate->sdp_mid();
+	LOG(LS_INFO) << "sdp_mline_index: " << candidate->sdp_mline_index();
+	LOG(LS_INFO) << "sdp: " << candidateStr;
 
 	web::json::value candidateJson;
 	candidateJson["sdp_mid"] = web::json::value::string(candidate->sdp_mid());
@@ -44,13 +46,13 @@ bool VideoconSignaling::SendCandidate(const webrtc::IceCandidateInterface* candi
 
 void VideoconSignaling::registerObserver(ISignalingObserver* observer) {
 	if(observer == NULL) {
-		std::cerr << "Registering NULL Observer" << std::endl;
+		LOG(LS_ERROR) << "Registering NULL Observer";
 		return;
 	}
 
 	auto found = std::find(_observers.begin(), _observers.end(), observer);
 	if(found != _observers.end()) {
-		std::cerr << "Reregistering Observer that has already been registered" << std::endl;
+		LOG(LS_ERROR) << "Reregistering Observer that has already been registered";
 		return;
 	}
 
@@ -59,7 +61,7 @@ void VideoconSignaling::registerObserver(ISignalingObserver* observer) {
 
 void VideoconSignaling::unregisterObserver(ISignalingObserver* observer) {
 	if(observer == NULL) {
-		std::cerr << "Unregistering NULL observer" << std::endl;
+		LOG(LS_ERROR) << "Unregistering NULL observer";
 		return;
 	}
 
@@ -78,7 +80,7 @@ uri VideoconSignaling::_buildUri(const std::string& nameSpace) {
 }
 
 void VideoconSignaling::_initObserver() {
-	std::cout << "Initializing Firebase Observer for Event-Stream" << std::endl;
+	LOG(LS_INFO) << "Initializing Firebase Observer for Event-Stream";
 
 	_modeString = _mode == eCallee ? _callee : _caller;
 }
@@ -96,16 +98,16 @@ bool VideoconSignaling::checkOffer() {
 
 bool VideoconSignaling::_checkDescription(std::string desc, std::string mode, bool* done, std::function<void(webrtc::SessionDescriptionInterface*)> notify) {
 	_getKeyValue(mode, [=](http_response response){
-		std::cout << "Get description Response code: " << response.status_code() << std::endl;
+		LOG(LS_INFO) << "Get description Response code: " << response.status_code();
 		if( response.status_code() == status_codes::OK) {
 			response.extract_json().then([=](web::json::value value){
 				if(value.is_null()) {
-					std::cout << "No " << desc << " found yet" << std::endl;
+					LOG(LS_INFO) << "No " << desc << " found yet";
 				} else {
-					std::cout << desc << ": " << value.serialize() << std::endl;
+					LOG(LS_INFO) << desc << ": " << value.serialize();
 					*done = true;
 					web::json::value description = value[desc];
-					std::cout << desc << ": " << description.as_string() << std::endl;
+					LOG(LS_INFO) << desc << ": " << description.as_string();
 					notify(webrtc::CreateSessionDescription(desc, description.as_string()));
 					_extractCandidates(value["candidates"]);
 				}
@@ -154,11 +156,11 @@ void VideoconSignaling::_saveKeyValue(const std::string& method,
 
 	_doRestCall(nameSpace, save, client, [=](http_response response){
 		response.extract_json().then([=](web::json::value body) {
-			std::cout << "Response code: " << response.status_code() << std::endl;
+			LOG(LS_INFO) << "Response code: " << response.status_code();
 
 			std::stringstream bodyStream;
 			body.serialize(bodyStream);
-			std::cout << "JSON Body: " << bodyStream.str() << std::endl;
+			LOG(LS_INFO) << "JSON Body: " << bodyStream.str();
 		});
 	});
 
@@ -171,28 +173,28 @@ void VideoconSignaling::_doRestCall(const std::string& nameSpace, http_request& 
 		uri_builder builder = _buildUri(nameSpace);
 		request.set_request_uri(builder.to_uri());
 
-		std::cout << "Request URI: " + builder.to_string() << std::endl;
+		LOG(LS_INFO) << "Request URI: " + builder.to_string();
 	}
 
 	client.request(request).then(handleResponse);
 }
 
 void VideoconSignaling::_notifyOfferObservers(webrtc::SessionDescriptionInterface* offer) {
-	std::cout << "Notifying all offer observers" << std::endl;
+	LOG(LS_INFO) << "Notifying all offer observers";
 	for(auto i = _observers.begin(); i != _observers.end(); ++i ) {
 		(*i)->OnReceivedOffer(offer);
 	}
 }
 
 void VideoconSignaling::_notifyAnswerObservers(webrtc::SessionDescriptionInterface* answer) {
-	std::cout << "Notifying all answer observers" << std::endl;
+	LOG(LS_INFO) << "Notifying all answer observers";
 	for(auto i = _observers.begin(); i != _observers.end(); ++i ) {
 		(*i)->OnReceivedAnswer(answer);
 	}
 }
 
 void VideoconSignaling::VideoconSignaling::_notifyCandidateObservers(webrtc::IceCandidateInterface* candidate) {
-	std::cout << "Notifying all ice candidate observers" << std::endl;
+	LOG(LS_INFO) << "Notifying all ice candidate observers";
 	for(auto i = _observers.begin(); i != _observers.end(); ++i ) {
 		(*i)->OnReceivedCandidate(candidate);
 	}
